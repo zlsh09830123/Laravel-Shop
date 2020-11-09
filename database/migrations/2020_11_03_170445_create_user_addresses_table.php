@@ -17,8 +17,9 @@ class CreateUserAddressesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('city');
+            $table->string('district');
             $table->string('address');
-            $table->string('zip');
+            $table->string('zip_code');
             $table->string('contact_name');
             $table->string('contact_phone');
             $table->dateTime('last_used_at')->nullable();
