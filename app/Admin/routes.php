@@ -15,4 +15,8 @@ Route::group([
     $router->get('/', [HomeController::class, 'index'])->name('admin.home');
     $router->get('users', [UsersController::class, 'index'])->name('admin.users');
     $router->get('products', [ProductsController::class, 'index'])->name('admin.products');
+    $router->get('products/create', [ProductsController::class, 'create']);
+    $router->post('products', [ProductsController::class, 'store']);
+    $router->get('products/{id}/edit', [ProductsController::class, 'edit']);
+    $router->put('products/{id}', [ProductsController::class, 'update']);
 });
