@@ -7,6 +7,33 @@
   <div class="col-lg-10 offset-lg-1">
     <div class="card">
       <div class="card-body">
+        <!-- 搜尋功能開始 -->
+        <form action="{{ route('products.index') }}" class="search-form">
+          <div class="form-row">
+            <div class="col-md-9">
+              <div class="form-row">
+                <div class="col-auto">
+                  <input type="text" class="form-control form-control-sm" name="search" placeholder="搜尋">
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary btn-sm">搜尋</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select name="order" class="form-control form-control-sm float-right">
+                <option value="">排序方式</option>
+                <option value="price_asc">價格從低到高</option>
+                <option value="price_desc">價格從高到低</option>
+                <option value="sold_count_desc">銷量從高到低</option>
+                <option value="sold_count_asc">銷量從低到高</option>
+                <option value="rating_desc">評價從高到低</option>
+                <option value="rating_asc">評價從低到高</option>
+              </select>
+              </div>
+          </div>
+        </form>
+        <!-- 搜尋功能結束 -->
         <div class="row products-list">
           @foreach($products as $product)
             <div class="col-3 product-item">
@@ -24,9 +51,23 @@
             </div>
           @endforeach
         </div>
-        <div class="float-right">{{ $products->links() }}</div>
+        <!-- filters 變量也傳給分頁元件才能在換頁時也能保留 search 及 order 變量 -->
+        <div class="float-right">{{ $products->appends($filters)->links() }}</div>
       </div>
     </div>
   </div>
 </div>
+@endsection
+
+@section('scriptsAfterJs')
+  <script>
+    var filters = {!! json_encode($filters) !!};
+    $(document).ready(function() {
+      $('.search-form input[name=search]').val(filters.search);
+      $('.search-form select[name=order]').val(filters.order);
+      $('.search-form select[name=order]').on('change', function() {
+        $('.search-form').submit();
+      });
+    })
+  </script>
 @endsection
