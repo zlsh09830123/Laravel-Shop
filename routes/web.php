@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/products')->name('root');
 Route::get('products', [ProductsController::class, 'index'])->name('products.index');
+Route::get('products/{product}', [ProductsController::class, 'show'])->name('products.show');
 
 Auth::routes(['verify' => true]);
 
