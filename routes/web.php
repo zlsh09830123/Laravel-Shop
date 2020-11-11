@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\PagesController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserAddressesController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [PagesController::class, 'root'])->name('root');
+Route::redirect('/', '/products')->name('root');
+Route::get('products', [ProductsController::class, 'index'])->name('products.index');
 
 Auth::routes(['verify' => true]);
 
