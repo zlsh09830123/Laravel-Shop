@@ -28,4 +28,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('user_addresses/{user_address}', [UserAddressesController::class, 'edit'])->name('user_addresses.edit');
     Route::put('user_addresses/{user_address}', [UserAddressesController::class, 'update'])->name('user_addresses.update');
     Route::delete('user_addresses/{user_address}', [UserAddressesController::class, 'destroy'])->name('user_addresses.destroy');
+    Route::post('products/{product}/favorite', [ProductsController::class, 'favor'])->name('products.favor');
+    Route::delete('products/{product}/favorite', [ProductsController::class, 'disfavor'])->name('products.disfavor');
 });
