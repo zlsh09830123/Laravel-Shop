@@ -18,23 +18,24 @@
       <ul class="navbar-nav navbar-right">
         <!-- Authentication Links -->
         @guest
-        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">登入</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">註冊</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">登入</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">註冊</a></li>
         @else
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <img src="https://img.icons8.com/fluent/30/000000/lemur.png" class="img-responsive">
-            {{ Auth::user()->name }}
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a href="{{ route('user_addresses.index') }}" class="dropdown-item">收件地址</a>
-            <a href="{{ route('products.favorites') }}" class="dropdown-item">我的收藏</a>
-            <a class="dropdown-item" id="logout" href="#" onclick="event.preventDefault();document.getElementById('logout-form').submit();">登出</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="post" style="display: none;">
-              @csrf
-            </form>
-          </div>
-        </li>
+          <li class="nav-item"><a class="nav-link mt-1" href="{{ route('cart.index') }}"><i class="fa fa-shopping-cart fa-lg"></i></a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <img src="https://img.icons8.com/fluent/30/000000/lemur.png" class="img-responsive">
+              {{ Auth::user()->name }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a href="{{ route('user_addresses.index') }}" class="dropdown-item">收件地址</a>
+              <a href="{{ route('products.favorites') }}" class="dropdown-item">我的收藏</a>
+              <a class="dropdown-item" id="logout" href="#" onclick="event.preventDefault();document.getElementById('logout-form').submit();">登出</a>
+              <form id="logout-form" action="{{ route('logout') }}" method="post" style="display: none;">
+                @csrf
+              </form>
+            </div>
+          </li>
         @endguest
       </ul>
     </div>

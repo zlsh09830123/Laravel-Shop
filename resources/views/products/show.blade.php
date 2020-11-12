@@ -110,7 +110,8 @@
       axios.post('{{ route('cart.add') }}', {
         sku_id: $('label.active input[name=skus]').val(),
         amount: $('.cart_amount input').val(),
-      }).then(function() { // 請求成功執行此回調
+      })
+      .then(function() { // 請求成功執行此回調
           swal.fire('加入購物車成功', '', 'success');
         }, function(error) { // 請求失敗執行此回調
           if (error.response.status === 401) {
@@ -130,7 +131,13 @@
             // 其他情況應該是系統故障
             swal.fire('系統錯誤', '', 'error');
           }
-        });
+      })
+      .then(function() {
+        swal.fire('加入購物車', '', 'success')
+          .then(function() {
+            location.href = '{{ route('cart.index') }}';
+          });
+      });
     });
 	});
 </script>
