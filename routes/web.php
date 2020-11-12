@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserAddressesController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('products/{product}/favorite', [ProductsController::class, 'favor'])->name('products.favor');
     Route::delete('products/{product}/favorite', [ProductsController::class, 'disfavor'])->name('products.disfavor');
     Route::get('products/favorites', [ProductsController::class, 'favorites'])->name('products.favorites');
+    Route::post('cart', [CartController::class, 'add'])->name('cart.add');
 });
 
 Route::get('products/{product}', [ProductsController::class, 'show'])->name('products.show');
