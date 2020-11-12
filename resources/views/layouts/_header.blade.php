@@ -28,6 +28,7 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a href="{{ route('user_addresses.index') }}" class="dropdown-item">收件地址</a>
+            <a href="{{ route('products.favorites') }}" class="dropdown-item">我的收藏</a>
             <a class="dropdown-item" id="logout" href="#" onclick="event.preventDefault();document.getElementById('logout-form').submit();">登出</a>
             <form id="logout-form" action="{{ route('logout') }}" method="post" style="display: none;">
               @csrf
