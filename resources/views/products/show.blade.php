@@ -75,12 +75,12 @@
     $('.btn-favor').click(function() {
       // 發起一個 post ajax 請求，請求 url 通過後端的 route() 函數生成
       axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
-      .then(function() { // 請求成功會執行這個回調
-        swal.fire('操作成功', '', 'success')
-        .then(function() {
-          location.reload();
-        });
-      }, function(error) { // 請求失敗會執行這個回調
+        .then(function() { // 請求成功會執行這個回調
+          swal.fire('操作成功', '', 'success')
+            .then(function() {
+              location.reload();
+            });
+        }, function(error) { // 請求失敗會執行這個回調
         // 如果狀態碼是 401 代表沒登入
         if (error.response && error.response.status === 401) {
           swal.fire('請先登入', '', 'error');

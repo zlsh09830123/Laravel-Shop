@@ -76,9 +76,10 @@
 				if (!willDelete) {
 					return;
 				}
-				axios.delete('/cart/' + id).then(function() {
-					location.reload();
-				});
+        axios.delete('/cart/' + id)
+          .then(function() {
+            location.reload();
+          });
 			});
 		});
 
