@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserAddressesController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('cart', [CartController::class, 'add'])->name('cart.add');
     Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::delete('cart/{sku}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('orders', [OrdersController::class, 'store'])->name('orders.store');
 });
 
 Route::get('products/{product}', [ProductsController::class, 'show'])->name('products.show');

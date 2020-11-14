@@ -51,6 +51,32 @@
       @endforeach
       </tbody>
     </table>
+    <!-- 收件地址選擇及備註 -->
+    <div>
+      <form class="form-horizontal" role="form" id="order-form">
+        <div class="form-group row">
+          <label class="col-form-label col-sm-3 text-md-right">選擇收件地址</label>
+          <div class="col-sm-9 col-md-7">
+            <select name="address" class="form-control">
+              @foreach($addresses as $address)
+                <option value="{{ $address->id }}">{{ $address->full_address }} {{ $address->contact_name }} {{ $address->contact_phone }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-sm-3 text-md-right">備註</label>
+          <div class="col-sm-9 col-md-7">
+            <textarea name="remark" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="offset-sm-3 col-sm-3">
+            <button type="button" class="btn btn-primary btn-create-order">提交訂單</button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 </div>
@@ -95,6 +121,55 @@
 				$(this).prop('checked', checked);
 			});
 		});
+
+    // 監聽建立訂單按鈕的點擊事件
+    $('.btn-create-order').click(function() {
+      // 建構請求參數，將用戶選擇的地址的 id 和備註內容寫入請求參數
+      var req = {
+        address_id: $('#order-form').find('select[name=address]').val(),
+        items: [],
+        remark: $('#order-form').find('textarea[name=remark]').val(),
+      };
+      // 遍歷 <table> 標籤內所有帶有 data-id 屬性的 <tr> 標籤，也就是每一個購物車中的商品 SKU
+      $('table tr[data-id]').each(function() {
+        // 獲取當前行的單選框
+        var $checkbox = $(this).find('input[name=select][type=checkbox]');
+        // 如果單選框被禁用或者沒有被勾選則跳過
+        if ($checkbox.prop('disabled') || !$checkbox.prop('checked')) {
+          return;
+        }
+        // 獲取當前行中數量輸入框
+        var $input = $(this).find('input[name=amount]');
+        // 如果用戶將數量設為 0 或者不是一個數字則跳過
+        if ($input.val() == 0 || isNaN($input.val())) {
+          return;
+        }
+        // 把 SKU id 和數量存入請求參數陣列中
+        req.items.push({
+          sku_id: $(this).data('id'),
+          amount: $input.val(),
+        });
+      });
+      axios.post('{{ route('orders.store') }}', req)
+        .then(function(response) {
+          swal.fire('訂單提交成功', '', 'success');
+        }, function(error) {
+          if (error.response.status === 422) {
+            // HTTP 狀態碼為 422 代表用戶輸入驗證失敗
+            var html = '<div>';
+            _.each(error.response.data.errors, function(errors) {
+              _.each(errors, function(error) {
+                html += error + '<br>';
+              });
+            });
+            html += '</div>';
+            swal.fire({content: $(html)[0], icon: 'error'});
+          } else {
+            // 其他狀況為系統故障
+            swal.fire('系統錯誤', '', 'error');
+          }
+        });
+    });
 	});
 </script>
 @endsection

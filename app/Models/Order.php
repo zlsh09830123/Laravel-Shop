@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Order extends Model
 {
@@ -101,7 +102,7 @@ class Order extends Model
                 return $no;
             }
         }
-        \Log::warning('find order no failed');
+        Log::warning('find order no failed');
 
         return false;
     }
