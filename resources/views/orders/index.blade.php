@@ -62,7 +62,7 @@
 															否則訂單將自動關閉
 														@endif
 													</td>
-													<td rowspan="{{ count($order->items) }}" class="text-center"><a class="btn btn-primary btn-sm" href="">查看訂單</a></td>
+													<td rowspan="{{ count($order->items) }}" class="text-center"><a class="btn btn-primary btn-sm" href="{{ route('orders.show', ['order' => $order->id]) }}">查看訂單</a></td>
 												@endif
 											</tr>
 										@endforeach
