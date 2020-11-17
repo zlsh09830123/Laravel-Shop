@@ -43,7 +43,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "bootstrap/helpers.php"
+            "bootstrap/helpers.php",
+            "app/ECPaySDK/ECPay.Payment.Integration.php"
         ]
     },
     "autoload-dev": {

@@ -68,6 +68,13 @@
             @endif
           </div>
         </div>
+        <!-- 結帳按鈕開始 -->
+        @if(!$order->paid_at && !$order->closed)
+          <div class="payment-buttons">
+            <a href="{{ route('payment.ecpay', ['order' => $order->id]) }}" class="btn btn-primary btn-sm">結帳</a>
+          </div>
+        @endif
+        <!-- 結帳按鈕結束 -->
       </div>
     </div>
   </div>

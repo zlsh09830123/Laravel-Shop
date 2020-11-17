@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserAddressesController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('orders', [OrdersController::class, 'store'])->name('orders.store');
     Route::get('orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+    Route::get('payment/{order}/ecpay', [PaymentController::class, 'payByECPay'])->name('payment.ecpay');
+    Route::get('success', [PaymentController::class, 'redirectFromECPay']);
 });
 
+Route::post('callback', [PaymentController::class, 'callback']);
 Route::get('products/{product}', [ProductsController::class, 'show'])->name('products.show');
