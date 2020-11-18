@@ -46,6 +46,18 @@
         <div class="line"><div class="line-label">收件地址：</div><div class="line-value">{{ join(' ', $order->address) }}</div></div>
         <div class="line"><div class="line-label">訂單備註：</div><div class="line-value">{{ $order->remark ?: '-' }}</div></div>
         <div class="line"><div class="line-label">訂單編號：</div><div class="line-value">{{ $order->no }}</div></div>
+        <!-- 輸出物流狀態 -->
+        <div class="line">
+          <div class="line-label">物流狀態：</div>
+          <div class="line-value">{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}</div>
+        </div>
+        <!-- 如果有物流資訊則顯示 -->
+        @if($order->ship_data)
+        <div class="line">
+          <div class="line-label">物流資訊：</div>
+          <div class="line-value">{{ $order->ship_data['express_company'] }} {{ $order->ship_data['express_no'] }}</div>
+        </div>
+        @endif
       </div>
       <div class="order-summary text-right">
         <div class="total-amount">
@@ -75,10 +87,51 @@
           </div>
         @endif
         <!-- 結帳按鈕結束 -->
+        <!-- 如果訂單的出貨狀態為已出貨則顯示確認收貨按鈕 -->
+        @if($order->ship_status === \App\Models\Order::SHIP_STATUS_DELIVERED)
+        <div class="receive-button">
+          <!-- 將原本的表單替換成下面這個按鈕 -->
+          <button type="button" id="btn-receive" class="btn btn-sm btn-success">確認收貨</button>
+        </div>
+        @endif
       </div>
     </div>
   </div>
 </div>
 </div>
 </div>
+@endsection
+
+@section('scriptsAfterJs')
+<script>
+  $(document).ready(function() {
+    // 確認收貨按鈕點擊事件
+    $('#btn-receive').click(function() {
+      // 彈出確認框
+      swal.fire({
+        title: '確認已經收到商品？',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: '取消',
+        confirmButtonText: '確認收到',
+        confirmButtonColor: '#d33',
+      })
+        .then(function(result) {
+          // 如果點擊取消按紐則不做任何操作
+          if (result.isDismissed) {
+            return;
+          }
+          // 點擊確認按鈕
+          if (result.isConfirmed) {
+            // ajax 提交確認操作
+            axios.post('{{ route('orders.received', [$order->id]) }}')
+              .then(function() {
+                // 刷新頁面
+                location.reload();
+              });
+          }
+        });
+      });
+  });
+</script>
 @endsection

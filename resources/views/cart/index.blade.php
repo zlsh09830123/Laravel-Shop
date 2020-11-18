@@ -95,17 +95,21 @@
 			swal.fire({
 				title: "確定要移除此商品？",
 				icon: "warning",
-				buttons: ['取消', '確定'],
-				dangerMode: true,
-			}).then(function(willDelete) {
-				// 用戶點擊確定按鈕，willDelete 的值為 true，否則為 false
-				if (!willDelete) {
+        showCancelButton: true,
+        cancelButtonText: '取消',
+        confirmButtonText: '確定',
+        confirmButtonColor: '#d33',
+			}).then(function(result) {
+				// 用戶點擊取消按鈕
+				if (result.isDismissed) {
 					return;
 				}
-        axios.delete('/cart/' + id)
-          .then(function() {
-            location.reload();
-          });
+        if (result.isConfirmed) {
+          axios.delete('/cart/' + id)
+            .then(function() {
+              location.reload();
+            });
+        }
 			});
 		});
 

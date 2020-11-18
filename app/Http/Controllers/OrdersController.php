@@ -7,6 +7,7 @@ use App\Models\UserAddress;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
+use App\Exceptions\InvalidRequestException;
 
 class OrdersController extends Controller
 {
@@ -35,5 +36,22 @@ class OrdersController extends Controller
     {
         $this->authorize('own', $order);
         return view('orders.show', ['order' => $order->load(['items.productSku', 'items.product'])]);
+    }
+
+    public function received(Order $order, Request $request)
+    {
+        // 驗證權限
+        $this->authorize('own', $order);
+
+        // 判斷訂單的出貨狀態是否為已出貨
+        if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {
+            throw new InvalidRequestException('出貨狀態不正確');
+        }
+
+        //更新出貨狀態為已收到
+        $order->update(['ship_status' => Order::SHIP_STATUS_RECEIVED]);
+
+        // 返回原頁面
+        return $order;
     }
 }
