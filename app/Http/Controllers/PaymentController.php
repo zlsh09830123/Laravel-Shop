@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderPaid;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Exceptions\InvalidRequestException;
@@ -67,18 +68,26 @@ class PaymentController extends Controller
         if ($order->paid_at) {
             return 'success';
         }
+        
         if (request('RtnCode') == '1') { // RtnCode=1表示付款成功
             $order->update([
                 'paid_at' => Carbon::now(), // 支付時間
                 'payment_method' => 'ecpay', // 支付方式
                 'payment_no' => request('MerchantTradeNo'), // 綠界訂單編號
-            ]);
-            echo '1|OK'; // 系統收到綠界回傳結果，正確回應1|OK
+                ]);
+                echo '1|OK'; // 系統收到綠界回傳結果，正確回應1|OK
         }
+        
+        $this->afterPaid($order);
     }
 
     public function redirectFromECPay()
     {
         return redirect('/orders'); // 返回訂單列表
+    }
+
+    protected function afterPaid(Order $order)
+    {
+        event(new OrderPaid($order));
     }
 }
