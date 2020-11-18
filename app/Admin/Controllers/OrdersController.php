@@ -8,6 +8,8 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Layout\Content;
+use Illuminate\Http\Request;
+use App\Exceptions\InvalidRequestException;
 
 class OrdersController extends AdminController
 {
@@ -64,6 +66,36 @@ class OrdersController extends AdminController
             ->header('查看訂單')
             // body() 方法可以接受 Laravel 的視圖做為參數
             ->body(view('admin.orders.show', ['order' => Order::find($id)]));
+    }
+
+    public function ship(Order $order, Request $request)
+    {
+        // 判斷當前訂單是否已支付
+        if (!$order->paid_at) {
+            throw new InvalidRequestException('此訂單未付款');
+        }
+        // 判斷當前訂單出貨狀態是否為未出貨
+        if ($order->ship_status !== Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('此訂單已出貨');
+        }
+        // Laravel 5.5 之後 validate() 方法可以返回校驗過的值
+        $validatedData = $request->validate([
+            'express_company' => 'required',
+            'express_no' => 'required',
+        ], [], [
+            'express_company' => '物流公司',
+            'express_no' => '物流單號',
+        ]);
+        // 將訂單出貨狀態改為已出貨，並存入物流資訊
+        $order->update([
+            'ship_status' => Order::SHIP_STATUS_DELIVERED,
+            // 我們在 Order 模型的 $casts 屬型裡指明了 ship_data 是一個陣列
+            // 因此這裡可以直接把陣列傳過去
+            'ship_data' => $validatedData,
+        ]);
+
+        // 返回上一頁
+        return redirect()->back();
     }
 
     /**
