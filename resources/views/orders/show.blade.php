@@ -58,6 +58,17 @@
           <div class="line-value">{{ $order->ship_data['express_company'] }} {{ $order->ship_data['express_no'] }}</div>
         </div>
         @endif
+        <!-- 訂單已支付，且退款狀態不是未退款時顯示退款資訊 -->
+        @if($order->paid_at && $order->refund_status !== \App\Models\Order::REFUND_STATUS_PENDING)
+        <div class="line">
+          <div class="line-label">退款狀態：</div>
+          <div class="line-value">{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</div>
+        </div>
+        <div class="line">
+          <div class="line-label">退款理由：</div>
+          <div class="line-value">{{ $order->extra['refund_reason'] }}</div>
+        </div>
+        @endif
       </div>
       <div class="order-summary text-right">
         <div class="total-amount">
@@ -92,6 +103,12 @@
         <div class="receive-button">
           <!-- 將原本的表單替換成下面這個按鈕 -->
           <button type="button" id="btn-receive" class="btn btn-sm btn-success">確認收貨</button>
+        </div>
+        @endif
+        <!-- 訂單已支付，且退款狀態是未退款時顯示申請退款按鈕 -->
+        @if($order->paid_at && $order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
+        <div class="refund-button">
+          <button id="btn-apply-refund" class="btn btn-sm btn-danger">申請退款</button>
         </div>
         @endif
       </div>
@@ -130,6 +147,30 @@
                 location.reload();
               });
           }
+        });
+      });
+
+    // 退款按鈕點擊事件
+    $('#btn-apply-refund').click(function() {
+      // 彈出確認框
+      swal.fire({
+        text: '請輸入退款理由',
+        input: 'text',
+      })
+        .then(function(input) {
+          // 當用戶點擊 swal 彈出框上的按鈕時觸發這個函數
+          if (!input['value']) {
+            swal.fire('退款理由不得為空', '', 'error')
+            return;
+          }
+          // 請求退款接口
+          axios.post('{{ route('orders.apply_refund', [$order->id]) }}', {reason: input['value']})
+            .then(function() {
+              swal.fire('申請退款成功', '', 'success').then(function() {
+                // 用戶點擊彈出框上按鈕重新加載頁面
+                location.reload();
+              });
+            });
         });
       });
   });
