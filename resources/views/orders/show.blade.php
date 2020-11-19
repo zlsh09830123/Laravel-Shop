@@ -91,6 +91,12 @@
             @endif
           </div>
         </div>
+        @if(isset($order->extra['refund_disagree_reason']))
+        <div>
+          <span>拒絕退款理由：</span>
+          <div class="value">{{ $order->extra['refund_disagree_reason'] }}</div>
+        </div>
+        @endif
         <!-- 結帳按鈕開始 -->
         @if(!$order->paid_at && !$order->closed)
           <div class="payment-buttons">
@@ -134,7 +140,7 @@
         confirmButtonColor: '#d33',
       })
         .then(function(result) {
-          // 如果點擊取消按紐則不做任何操作
+          // 如果點擊取消按鈕則不做任何操作
           if (result.isDismissed) {
             return;
           }
