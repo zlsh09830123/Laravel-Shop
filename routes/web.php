@@ -43,6 +43,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('payment/{order}/ecpay', [PaymentController::class, 'payByECPay'])->name('payment.ecpay');
     Route::get('success', [PaymentController::class, 'redirectFromECPay']);
     Route::post('orders/{order}/received', [OrdersController::class, 'received'])->name('orders.received');
+    Route::get('orders/{order}/review', [OrdersController::class, 'review'])->name('orders.review.show');
+    Route::post('orders/{order}/review', [OrdersController::class, 'sendReview'])->name('orders.review.store');
 });
 
 Route::post('callback', [PaymentController::class, 'callback']);

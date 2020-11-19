@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderReviewed;
 use App\Http\Requests\OrderRequest;
 use App\Models\UserAddress;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
 use App\Exceptions\InvalidRequestException;
+use Carbon\Carbon;
+use App\Http\Requests\SendReviewRequest;
 
 class OrdersController extends Controller
 {
@@ -53,5 +56,49 @@ class OrdersController extends Controller
 
         // 返回原頁面
         return $order;
+    }
+
+    public function review(Order $order)
+    {
+        // 驗證權限
+        $this->authorize('own', $order);
+        // 判斷是否已經支付
+        if (!$order->paid_at) {
+            throw new InvalidRequestException('此訂單未支付，無法評價');
+        }
+        // 使用 load() 方法加載關聯資料，避免 N+1 問題
+        return view('orders.review', ['order' => $order->load(['items.productSku', 'items.product'])]);
+    }
+
+    public function sendReview(Order $order, SendReviewRequest $request)
+    {
+        // 驗證權限
+        $this->authorize('own', $order);
+        if (!$order->paid_at) {
+            throw new InvalidRequestException('此訂單未支付，無法評價');
+        }
+        // 判斷是否已經評價
+        if ($order->reviewed) {
+            throw new InvalidRequestException('此訂單已評價，不可重複提交');
+        }
+        $reviews = $request->input('reviews');
+        // 開啟事務
+        \DB::transaction(function() use ($reviews, $order) {
+            // 遍歷用戶提交的資料
+            foreach ($reviews as $review) {
+                $orderItem = $order->items()->find($review['id']);
+                // 保存評分和評價
+                $orderItem->update([
+                    'rating' => $review['rating'],
+                    'review' => $review['review'],
+                    'reviewed_at' => Carbon::now(),
+                ]);
+            }
+            // 將訂單標記為已評價
+            $order->update(['reviewed' => true]);
+        });
+        event(new OrderReviewed($order));
+
+        return redirect()->back();
     }
 }
