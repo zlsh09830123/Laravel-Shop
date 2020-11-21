@@ -71,7 +71,7 @@ export default {
       ])
     }
   },
-  created() { // component 初始化時會調用此方法
+  created() { // component 初始化時會呼叫此方法
     this.setFromValue(this.initValue)
   }
 }

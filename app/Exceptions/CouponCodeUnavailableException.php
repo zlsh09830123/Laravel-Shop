@@ -12,7 +12,7 @@ class CouponCodeUnavailableException extends Exception
         parent::__construct($message, $code);
     }
 
-    // 當這個異常被觸發時，會調用 render() 方法來輸出給用戶
+    // 當這個異常被觸發時，會呼叫 render() 方法來輸出給用戶
     public function render(Request $request)
     {
         // 如果用戶透過 API 請求，則返回 JSON 格式的錯誤訊息

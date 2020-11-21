@@ -28,9 +28,9 @@ class SendOrderPaidMail implements ShouldQueue
      */
     public function handle(OrderPaid $event)
     {
-        // 從事件對象中取出對應的訂單
+        // 從事件物件中取出對應的訂單
         $order = $event->getOrder();
-        // 調用 notify() 方法來發送通知
+        // 呼叫 notify() 方法來發送通知
         $order->user->notify(new OrderPaidNotification($order));
     }
 }

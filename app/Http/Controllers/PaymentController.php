@@ -20,7 +20,7 @@ class PaymentController extends Controller
             throw new InvalidRequestException('訂單狀態錯誤');
         }
 
-        // 調用綠界的網頁支付
+        // 呼叫綠界的網頁支付
         try {
             $obj = new \ECPay_AllInOne();
        

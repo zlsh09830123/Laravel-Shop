@@ -101,7 +101,7 @@
 	$(document).ready(function() {
 		// 監聽移除按鈕的點擊事件
 		$('.btn-remove').click(function() {
-			// $(this) 可以獲取到當前點擊的移除按鈕的 jQeury 對象
+			// $(this) 可以獲取到當前點擊的移除按鈕的 jQeury 物件
 			// closest() 方法可以獲取到符合選擇器的第一個祖先元素，在這裡就是當前點擊的移除按鈕之上的 <tr> 標籤
 			// data('id') 方法可以得到之前設置的 data-id 屬性的值，也就是對應的 SKU id
 			var id = $(this).closest('tr').data('id');
@@ -203,9 +203,9 @@
         swal.fire('請輸入優惠碼', '', 'warning');
         return;
       }
-      // 調用檢查接口
+      // 呼叫檢查接口
       axios.get('/coupon_codes/' + encodeURIComponent(code))
-        .then(function(response) { // then() 方法的第一個參數是回調，請求成功時會被調用
+        .then(function(response) { // then() 方法的第一個參數是回調，請求成功時會被呼叫
           $('#coupon_desc').text(response.data.description); // 輸出優惠資訊
           $('input[name=coupon_code]').prop('readonly', true); // 禁用優惠碼輸入框
           $('#btn-cancel-coupon').show(); // 顯示取消按鈕

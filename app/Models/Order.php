@@ -70,7 +70,7 @@ class Order extends Model
         static::creating(function($model) {
             // 如果模型的 no 欄位為空
             if (!$model->no) {
-                // 調用 findAvailableNo 生成訂單流水號
+                // 呼叫 findAvailableNo 生成訂單流水號
                 $model->no = static::findAvailableNo();
                 // 如果生成失敗，則終止建立訂單
                 if (!$model->no) {

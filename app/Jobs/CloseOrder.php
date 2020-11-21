@@ -30,7 +30,7 @@ class CloseOrder implements ShouldQueue
     }
 
     // 定義這個任務類具體的執行邏輯
-    // 當隊列處理器從隊列中取出任務時，會調用 handle() 方法
+    // 當隊列處理器從隊列中取出任務時，會呼叫 handle() 方法
     /**
      * Execute the job.
      *

@@ -29,7 +29,7 @@ class UpdateProductSoldCount implements ShouldQueue
     // Laravel 會預設執行監聽器的 handle() 方法，觸發的事件會作為 handle() 方法的參數
     public function handle(OrderPaid $event)
     {
-        // 從事件對象中取出對應的訂單
+        // 從事件物件中取出對應的訂單
         $order = $event->getOrder();
         // 預加載商品資料
         $order->load('items.product');

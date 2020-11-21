@@ -60,7 +60,7 @@ class ProductsController extends Controller
         }
 
         $favored = false;
-        // 用戶未登入時返回的是 null，已登入時返回的是對應的用戶對象
+        // 用戶未登入時返回的是 null，已登入時返回的是對應的用戶物件
         if ($user = $request->user()) {
             // 從當前用戶已收藏的商品中搜尋 id 為當前商品的 id 的商品
             // boolval() 函數用於把值轉為布林值

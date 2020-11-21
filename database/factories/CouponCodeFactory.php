@@ -39,7 +39,7 @@ class CouponCodeFactory extends Factory
         }
         return [
             'name' => join(' ', $this->faker->words), // 隨機生成名稱
-            'code' => CouponCode::findAvailableCode(), // 調用優惠碼生成方法
+            'code' => CouponCode::findAvailableCode(), // 呼叫優惠碼生成方法
             'type' => $type,
             'value' => $value,
             'total' => 1000,
