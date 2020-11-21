@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CouponCodesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductsController;
@@ -46,6 +47,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('orders/{order}/review', [OrdersController::class, 'review'])->name('orders.review.show');
     Route::post('orders/{order}/review', [OrdersController::class, 'sendReview'])->name('orders.review.store');
     Route::post('orders/{order}/apply_refund', [OrdersController::class, 'applyRefund'])->name('orders.apply_refund');
+    Route::get('coupon_codes/{code}', [CouponCodesController::class, 'show'])->name('coupon_codes.show');
 });
 
 Route::post('callback', [PaymentController::class, 'callback']);

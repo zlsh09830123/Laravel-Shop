@@ -70,6 +70,19 @@
             <textarea name="remark" class="form-control" rows="3"></textarea>
           </div>
         </div>
+        <!-- 優惠碼開始 -->
+        <div class="form-group row">
+          <label class="col-form-label col-sm-3 text-md-right">優惠碼</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" name="coupon_code">
+            <span class="form-text text-muted" id="coupon_desc"></span>
+          </div>
+          <div class="col-sm-3">
+            <button type="button" class="btn btn-success" id="btn-check-coupon">檢查</button>
+            <button type="button" class="btn btn-danger" style="display: none;" id="btn-cancel-coupon">取消</button>
+          </div>
+        </div>
+        <!-- 優惠碼結束 -->
         <div class="form-group">
           <div class="offset-sm-3 col-sm-3">
             <button type="button" class="btn btn-primary btn-create-order">提交訂單</button>
@@ -176,6 +189,43 @@
             swal.fire('系統錯誤', '', 'error');
           }
         });
+    });
+
+    // 監聽優惠券檢查按鈕的點擊事件
+    $('#btn-check-coupon').click(function() {
+      // 獲取用戶輸入的優惠碼
+      var code = $('input[name=coupon_code]').val();
+      // 如果沒有輸入則彈框提示
+      if (!code) {
+        swal.fire('請輸入優惠碼', '', 'warning');
+        return;
+      }
+      // 調用檢查接口
+      axios.get('/coupon_codes/' + encodeURIComponent(code))
+        .then(function(response) { // then() 方法的第一個參數是回調，請求成功時會被調用
+          $('#coupon_desc').text(response.data.description); // 輸出優惠資訊
+          $('input[name=coupon_code]').prop('readonly', true); // 禁用優惠碼輸入框
+          $('#btn-cancel-coupon').show(); // 顯示取消按鈕
+          $('#btn-check-coupon').hide(); // 隱藏檢查按鈕
+        }, function(error) {
+          // 如果返回狀態碼是 404，說明優惠券不存在
+          if (error.response.status === 404) {
+            swal.fire('優惠碼不存在', '', 'error');
+          } else if (error.response.status === 403) { // 如果返回狀態碼是 403，說明有其他條件不滿足
+            swal.fire(error.response.data.msg, '', 'error');
+          } else {
+            // 其他錯誤
+            swal.fire('系統內部錯誤', '', 'error');
+          }
+        });
+    });
+
+    // 監聽取消按鈕的點擊事件
+    $('#btn-cancel-coupon').click(function() {
+      $('#coupon_desc').text(''); // 清空優惠資訊
+      $('input[name=coupon_code]').prop('readonly', false); // 啟用優惠碼輸入框
+      $('#btn-cancel-coupon').hide(); // 隱藏取消按鈕
+      $('#btn-check-coupon').show(); // 顯示檢查按鈕
     });
 	});
 </script>
