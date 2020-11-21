@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use App\Exceptions\CouponCodeUnavailableException;
 
 class CouponCode extends Model
 {
@@ -66,5 +68,50 @@ class CouponCode extends Model
         }
 
         return $str . '減$' . $this->value;
+    }
+
+    public function checkAvailable($orderAmount = null)
+    {
+        if (!$this->enabled) {
+            throw new CouponCodeUnavailableException('優惠券不存在');
+        }
+
+        if ($this->total - $this->used <= 0) {
+            throw new CouponCodeUnavailableException('此優惠券數量已被使用完畢');
+        }
+
+        if ($this->not_before && $this->not_before->gt(Carbon::now())) {
+            throw new CouponCodeUnavailableException('此優惠券現在還不能使用');
+        }
+
+        if ($this->not_after && $this->not_after->lt(Carbon::now())) {
+            throw new CouponCodeUnavailableException('此優惠券已過期');
+        }
+
+        if (!is_null($orderAmount) && $orderAmount < $this->min_amount) {
+            throw new CouponCodeUnavailableException('訂單金額低於此優惠券最低金額門檻');
+        }
+    }
+
+    public function getAdjustedPrice($orderAmount)
+    {
+        // 固定金額
+        if ($this->type === self::TYPE_FIXED) {
+            // 為了保證系統強健性，我們需要訂單金額最少為 1 元
+            return max(1, $orderAmount - $this->value);
+        }
+
+        return floor($orderAmount * (100 - $this->value) / 100); // 無條件捨去小數點
+    }
+
+    public function changeUsed($increase = true)
+    {
+        // 傳入 true 代表新增用量，否則是減少用量
+        if ($increase) {
+            // 與檢查 SKU 庫存類似，這裡需要檢查當前用量是否已經超過總量
+            return $this->where('id', $this->id)->where('used', '<', $this->total)->increment('used');
+        } else {
+            return $this->decrement('used');
+        }
     }
 }

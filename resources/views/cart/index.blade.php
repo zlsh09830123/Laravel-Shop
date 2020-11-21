@@ -146,6 +146,7 @@
         address_id: $('#order-form').find('select[name=address]').val(),
         items: [],
         remark: $('#order-form').find('textarea[name=remark]').val(),
+        coupon_code: $('input[name=coupon_code]').val(), // 從優惠碼輸入框中取得優惠碼
       };
       // 遍歷 <table> 標籤內所有帶有 data-id 屬性的 <tr> 標籤，也就是每一個購物車中的商品 SKU
       $('table tr[data-id]').each(function() {

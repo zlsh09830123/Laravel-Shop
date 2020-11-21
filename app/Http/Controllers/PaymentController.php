@@ -60,7 +60,7 @@ class PaymentController extends Controller
     {
         // dd(request());
         $order = Order::where('no', '=', request('MerchantTradeNo'))->firstOrFail();
-        // 正常來說不太可能出現支付了一筆不存在的訂單，這個判斷只是增加系統健壯性
+        // 正常來說不太可能出現支付了一筆不存在的訂單，這個判斷只是增加系統強健性
         if (!$order) {
             return 'fail';
         }
