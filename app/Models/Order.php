@@ -85,6 +85,11 @@ class Order extends Model
         return $this->belongsTo('App\Models\User');
     }
 
+    public function couponCode()
+    {
+        return $this->belongsTo('App\Models\CouponCode');
+    }
+
     public function items()
     {
         return $this->hasMany('App\Models\OrderItem');
