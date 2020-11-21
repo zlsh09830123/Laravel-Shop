@@ -56,16 +56,37 @@ class CouponCodesController extends AdminController
     {
         $form = new Form(new CouponCode());
 
-        $form->text('name', __('Name'));
-        $form->text('code', __('Code'));
-        $form->text('type', __('Type'));
-        $form->number('value', __('Value'));
-        $form->number('total', __('Total'));
-        $form->number('used', __('Used'));
-        $form->number('min_amount', __('Min amount'));
-        $form->datetime('not_before', __('Not before'))->default(date('Y-m-d H:i:s'));
-        $form->datetime('not_after', __('Not after'))->default(date('Y-m-d H:i:s'));
-        $form->switch('enabled', __('Enabled'));
+        $form->display('id', 'ID');
+        $form->text('name', '名稱')->rules('required');
+        $form->text('code', '優惠碼')->rules(function($form) {
+            // 如果 $form->model()->id 不為空，代表是編輯操作
+            if ($id = $form->model()->id) {
+                return 'nullable|unique:coupon_codes,code,'.$id.',id';
+            } else {
+                return 'nullable|unique:coupon_codes';
+            }
+        });
+        $form->radio('type', '類型')->options(CouponCode::$typeMap)->rules('required')->default(CouponCode::TYPE_FIXED);
+        $form->text('value', '折扣')->rules(function($form) {
+            if (request()->input('type') === CouponCode::TYPE_PERCENT) {
+                // 如果選擇了百分比折扣類型，折扣範圍只能是 1 ~ 99
+                return 'required|numeric|between:1,99';
+            } else {
+                // 否則只要大於 1 即可
+                return 'required|numeric|min:1';
+            }
+        });
+        $form->text('total', '總量')->rules('required|numeric|min:0');
+        $form->text('min_amount', '最低金額')->rules('required|numeric|min:0');
+        $form->datetime('not_before', '開始時間');
+        $form->datetime('not_after', '結束時間');
+        $form->radio('enabled', '啟用')->options(['1' => '是', '0' => '否']);
+
+        $form->saving(function(Form $form) {
+            if (!$form->code) {
+                $form->code = CouponCode::findAvailableCode();
+            }
+        });
 
         return $form;
     }
