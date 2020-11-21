@@ -8,7 +8,7 @@ use App\Exceptions\CouponCodeUnavailableException;
 
 class CouponCodesController extends Controller
 {
-    public function show($code)
+    public function show($code, Request $request)
     {
         // 判斷優惠券是否存在
         if (!$record = CouponCode::where('code', $code)->first()) {
@@ -16,7 +16,7 @@ class CouponCodesController extends Controller
         }
 
         // 以下異常使用 App\Models\CouponCode 中的 checkAvailable() 邏輯來判斷
-        $record->checkAvailable();
+        $record->checkAvailable($request->user());
 
         // 如果優惠券沒有啟用，則等同優惠券不存在
         // if (!$record->enabled) {

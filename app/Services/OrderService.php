@@ -21,7 +21,7 @@ class OrderService
         // 如果傳入優惠券，則先檢查是否可用
         if ($coupon) {
             // 但此時我們還沒有計算出訂單總金額，因此先不驗證
-            $coupon->checkAvailable();
+            $coupon->checkAvailable($user);
         }
 
         // 開啟一個資料庫事務，注意這裡也把 $coupon 放入 use() 中
@@ -63,7 +63,7 @@ class OrderService
             }
             if ($coupon) {
                 // 訂單總金額已經計算出來，檢查是否符合優惠券規則
-                $coupon->checkAvailable($totalAmount);
+                $coupon->checkAvailable($user, $totalAmount);
                 // 把訂單金額修改為優惠後的金額
                 $totalAmount = $coupon->getAdjustedPrice($totalAmount);
                 // 將訂單與優惠券關聯

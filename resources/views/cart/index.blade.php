@@ -185,6 +185,8 @@
             });
             html += '</div>';
             swal.fire({content: $(html)[0], icon: 'error'});
+          } else if (error.response.status === 403) { // 判斷狀態 403，如訂單金額不滿足優惠券金額最低門檻等異常
+            swal.fire(error.response.data.msg, '', 'error');
           } else {
             // 其他狀況為系統故障
             swal.fire('系統錯誤', '', 'error');

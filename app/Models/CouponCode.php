@@ -8,6 +8,7 @@ use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Exceptions\CouponCodeUnavailableException;
+use App\Models\User;
 
 class CouponCode extends Model
 {
@@ -70,7 +71,8 @@ class CouponCode extends Model
         return $str . '減$' . $this->value;
     }
 
-    public function checkAvailable($orderAmount = null)
+    // 添加一個 $user 參數
+    public function checkAvailable(User $user, $orderAmount = null)
     {
         if (!$this->enabled) {
             throw new CouponCodeUnavailableException('優惠券不存在');
@@ -90,6 +92,28 @@ class CouponCode extends Model
 
         if (!is_null($orderAmount) && $orderAmount < $this->min_amount) {
             throw new CouponCodeUnavailableException('訂單金額低於此優惠券最低金額門檻');
+        }
+
+        $used = Order::where('user_id', $user->id)
+            ->where('coupon_code_id', $this->id)
+            ->where(function($query) { // 用來生成 SQL 裡的括號，保證不會因為 or 關鍵字導致查詢結果不如預期
+                $query->where(function($query) {
+                    $query->whereNull('paid_at') // 未付款
+                        ->where('closed', false); // 且未關閉訂單
+                })->orWhere(function($query) { // 或
+                    $query->whereNotNull('paid_at') // 已付款
+                        ->where('refund_status', '!=', Order::REFUND_STATUS_SUCCESS); // 且未退款成功訂單
+                });
+            })
+            ->exists();
+        // SQL 語法：
+        // select * from orders where user_id = xx and coupon_code_id = xx
+        // and (
+        //   ( paid_at is null and closed = 0 )
+        //   or ( paid_at is not null and refund_status != 'success' )
+        // )
+        if ($used) {
+            throw new CouponCodeUnavailableException('您已經使用過這張優惠券了');
         }
     }
 

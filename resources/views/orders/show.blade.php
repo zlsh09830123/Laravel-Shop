@@ -71,6 +71,14 @@
         @endif
       </div>
       <div class="order-summary text-right">
+        <!-- 顯示優惠券資訊開始 -->
+        @if ($order->couponCode)
+        <div class="text-primary">
+          <span>優惠券：</span>
+          <div class="value">{{ $order->couponCode->description }}</div>
+        </div>
+        @endif
+        <!-- 顯示優惠券資訊結束 -->
         <div class="total-amount">
           <span>訂單總價：</span>
           <div class="value">${{ number_format($order->total_amount) }}</div>
