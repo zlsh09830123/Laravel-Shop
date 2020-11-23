@@ -58,7 +58,8 @@ class OrderFactory extends Factory
             'refund_no' => $refund ? Order::getAvailableRefundNo() : null,
             'closed' => false,
             'reviewed' => random_int(0, 10) > 2,
-            'ship_status' => $ship === Order::SHIP_STATUS_PENDING ? null : [
+            'ship_status' => $ship,
+            'ship_data' => $ship === Order::SHIP_STATUS_PENDING ? null : [
                 'express_company' => $this->faker->company,
                 'express_no' => $this->faker->uuid,
             ],
