@@ -27,7 +27,7 @@
         <td colspan="3">{{ $order->address['address'] }} {{ $order->address['zip_code'] }} {{ $order->address['contact_name'] }} {{ $order->address['contact_phone'] }}</td>
       </tr>
       <tr>
-        <td rowspan="{{ $order->items->count() + 1 }}">商品列表商品列表</td>
+        <td rowspan="{{ $order->items->count() + 1 }}">商品列表</td>
         <td>商品名稱</td>
         <td>單價</td>
         <td>數量</td>
