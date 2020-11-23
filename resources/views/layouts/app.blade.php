@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Laravel Shop') - Laravel Shop</title>
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{URL::asset('img/favicon-32x32.png')}}">
 </head>
 <body>
     <div id="app" class="{{ route_class() }}-page">
