@@ -56,8 +56,8 @@
 ![](https://i.imgur.com/Gu4rErM.png)
 ![](https://i.imgur.com/zz1zM8i.png)
 
-* Demo 網址：https://shop.mrhanji.com
-* 測試用帳號：shop@test
-* 測試用密碼：password
-* 信用卡測試卡號：4311-9522-2222-2222
-* 信用卡測試安全碼：222
+* Demo 網址: https://shop.mrhanji.com
+* 測試用帳號: shop@test
+* 測試用密碼: password
+* 信用卡測試卡號: 4311-9522-2222-2222
+* 信用卡測試安全碼: 222
